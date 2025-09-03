@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Bebidas</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        /* Estilos específicos para el inventario */
+        .inventory-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .inventory-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .inventory-table th {
+            background-color: #f7fafc;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .inventory-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .product-image-cell {
+            width: 80px;
+        }
+
+        .product-image-small {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            border-radius: 5px;
+            background: #f7fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .product-image-small img {
+            height: 50px;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background-color: #3182ce;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #e2e8f0;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        /* Modal de producto */
+        .product-modal-content {
+            max-width: 600px;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Categorías */
+        .categories-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name {
+            font-weight: bold;
+        }
+
+        .category-count {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .category-actions {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="inventory-container">
+            <div class="inventory-header">
+                <h1>🍷 Inventario de Bebidas</h1>
+                <div class="inventory-actions">
+                    <button class="btn-primary" onclick="openAddProductModal()">➕ Agregar Producto</button>
+                    <button class="btn-secondary" onclick="openAddCategoryModal()">📁 Nueva Categoría</button>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <input type="text" class="search-box" id="inventorySearch" placeholder="🔍 Buscar productos...">
+            </div>
+
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <tr>
+                        <td colspan="6" class="loading-spinner">Cargando productos...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+          <div class="categories-section">
+    <h2>📂 Categorías</h2>
+    <div class="categories-grid" id="categoriesGrid">
+        <!-- Las categorías se generarán aquí -->
+    </div>
+</div>
+
+<!-- Nueva sección para mesas -->
+<div class="categories-section">
+    <h2>🍽️ Mesas</h2>
+    <div class="inventory-actions">
+        <button class="btn-primary" onclick="openAddMesaModal()">➕ Nueva Mesa</button>
+    </div>
+    <div class="categories-grid" id="mesasGrid">
+        <!-- Las mesas se generarán aquí -->
+    </div>
+</div>
+
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar producto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content product-modal-content">
+
+            <div class="Modal-Title">
+                <h3 id="productModalTitle">Agregar Nuevo Producto</h3>
+            </div>
+
+            <div class="Modal-Body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Nombre del Producto</label>
+                        <input type="text" id="productName" placeholder="Ej: Ron Barceló Añejo">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Precio ($)</label>
+                        <input type="number" id="productPrice" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productStock">Stock</label>
+                        <input type="number" id="productStock" placeholder="0" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Categoría</label>
+                        <select id="productCategory">
+                            <option value="">Seleccionar categoría</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Descripción</label>
+                    <textarea id="productDescription" placeholder="Descripción del producto (opcional)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagen del Producto</label>
+                    <div class="image-preview" id="imagePreview">
+                        <span>🛒</span>
+                    </div>
+                    <input type="file" id="productImage" accept="image/*" style="display: none;">
+                    <button class="btn-secondary" onclick="document.getElementById('productImage').click()">Seleccionar
+                        Imagen</button>
+                </div>
+            </div>
+
+            <div class="Modal-Footer">
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="closeProductModal()">Cancelar</button>
+                    <button class="btn-primary" id="saveProductBtn" onclick="saveProduct()">Guardar Producto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar categoría -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <h3 id="categoryModalTitle">Nueva Categoría</h3>
+
+            <div class="input-group">
+                <label for="categoryName">Nombre de la Categoría</label>
+                <input type="text" id="categoryName" placeholder="Ej: Whisky, Cerveza, etc.">
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeCategoryModal()">Cancelar</button>
+                <button class="btn-primary" id="saveCategoryBtn" onclick="saveCategory()">Guardar Categoría</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal para agregar/editar mesa -->
+<div class="modal" id="mesaModal">
+    <div class="modal-content">
+        <h3 id="mesaModalTitle">Nueva Mesa</h3>
+        <div class="input-group">
+            <label for="mesaName">Nombre de la Mesa</label>
+            <input type="text" id="mesaName" placeholder="Ej: Mesa 1, Barra, Terraza">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-secondary" onclick="closeMesaModal()">Cancelar</button>
+            <button class="btn-primary" id="saveMesaBtn" onclick="saveMesa()">Guardar Mesa</button>
+        </div>
+    </div>
+</div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
+
+    <script>
+        // Configuración de Firebase (usando la misma que en index.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCa3ntHg9DqV3JefcvFP9cg8xCmwm0wlLo",
+            authDomain: "facturacion-drink.firebaseapp.com",
+            projectId: "facturacion-drink",
+            storageBucket: "facturacion-drink.firebasestorage.app",
+            messagingSenderId: "1093109447685",
+            appId: "1:1093109447685:web:a3015f3494f757a625b06c"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variables de estado
+        let products = [];
+        let categories = [];
+        let currentEditingProduct = null;
+        let currentEditingCategory = null;
+        let selectedImageFile = null;
+        let currentProductIcon = '🛒'; // Añade esta línea
+        let currentEditingMesa = null;
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeInventory();
+        });
+
+        async function initializeInventory() {
+            try {
+                // Cargar productos y categorías
+                await Promise.all([
+                    loadProducts(),
+                    loadCategories()
+                ]);
+
+                // Configurar eventos
+                setupInventoryEventListeners();
+
+                showNotification('Inventario cargado correctamente', 'success');
+            } catch (error) {
+                console.error('Error al inicializar inventario:', error);
+                showNotification('Error al cargar el inventario', 'error');
+            }
+        }
+
+        function setupInventoryEventListeners() {
+            // Búsqueda de productos
+            document.getElementById('inventorySearch').addEventListener('input', function (e) {
+                const searchTerm = e.target.value.toLowerCase();
+                renderProducts(searchTerm);
+            });
+
+            // Selección de imagen
+            document.getElementById('productImage').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    selectedImageFile = file;
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        document.getElementById('imagePreview').innerHTML =
+                            `<img src="${event.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        async function loadProducts() {
+            try {
+                const snapshot = await db.collection('products').get();
+                products = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        name: data.name,
+                        price: Number(data.price),
+                        stock: Number(data.stock),
+                        category: data.category || '',
+                        description: data.description || '',
+                        icon: data.icon || '🛒'  // Cambiado de 'image' a 'icon'
+                    };
+                });
+
+                renderProducts();
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+                showNotification('Error al cargar productos', 'error');
+            }
+        }
+
+
+        async function loadCategories() {
+            try {
+                const snapshot = await db.collection('categories').get();
+                categories = snapshot.docs.map(doc => {
+                    return {
+                        id: doc.id,
+                        name: doc.data().name,
+                        productCount: 0 // Inicializar contador
+                    };
+                });
+
+                // Contar productos por categoría
+                categories.forEach(cat => {
+                    cat.productCount = products.filter(p => p.category === cat.id).length;
+                });
+
+                renderCategories();
+                updateCategoryDropdown();
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+                showNotification('Error al cargar categorías', 'error');
+            }
+        }
+
+        function renderProducts(searchTerm = '') {
+            const container = document.getElementById('productsTableBody');
+
+            const filteredProducts = searchTerm ?
+                products.filter(p =>
+                    p.name.toLowerCase().includes(searchTerm) ||
+                    (p.category && categories.find(c => c.id === p.category)?.name.toLowerCase().includes(searchTerm))
+                ) :
+                products;
+
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="no-products">No se encontraron productos</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map(product => {
+                const category = categories.find(c => c.id === product.category);
+
+                return `
+                    <tr>
+                        <td class="product-image-cell">
+                            <div class="product-image-small">
+                                ${product.icon.startsWith('http') || product.icon.startsWith('data:image') ?
+                        `<img src="${product.icon}" alt="${product.name}">` :
+                        product.icon}
+                            </div>
+                        </td>
+                        <td>${product.name}</td>
+                        <td>
+                            ${category ? `<span class="category-tag">${category.name}</span>` : 'Sin categoría'}
+                        </td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td>${product.stock}</td>
+                        <td>
+                            <button class="action-btn edit-btn" onclick="editProduct('${product.id}')">Editar</button>
+                            <button class="action-btn delete-btn" onclick="deleteProduct('${product.id}')">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesGrid');
+
+            if (categories.length === 0) {
+                container.innerHTML = '<div class="no-products">No hay categorías creadas</div>';
+                return;
+            }
+
+            container.innerHTML = categories.map(category => {
+                return `
+                    <div class="category-card">
+                        <div>
+                            <div class="category-name">${category.name}</div>
+                            <div class="category-count">${category.productCount} producto(s)</div>
+                        </div>
+                        <div class="category-actions">
+                            <button class="action-btn edit-btn" onclick="editCategory('${category.id}')">Editar</button>
+                            <button class="action-btn delete-btn" onclick="deleteCategory('${category.id}')">Eliminar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCategoryDropdown() {
+            const select = document.getElementById('productCategory');
+            select.innerHTML = '<option value="">Seleccionar categoría</option>';
+
+            categories.forEach(category => {
+                select.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+            });
+        }
+
+        function openAddProductModal() {
+            currentEditingProduct = null;
+            document.getElementById('productModalTitle').textContent = 'Agregar Nuevo Producto';
+            document.getElementById('saveProductBtn').textContent = 'Guardar Producto';
+
+            // Limpiar formulario
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productStock').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('imagePreview').innerHTML = '<span>🛒</span>';
+            selectedImageFile = null;
+
+            document.getElementById('productModal').classList.add('active');
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            currentEditingProduct = productId;
+            document.getElementById('productModalTitle').textContent = 'Editar Producto';
+            document.getElementById('saveProductBtn').textContent = 'Actualizar Producto';
+
+            // Llenar formulario
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productPrice').value = product.price;
+            document.getElementById('productStock').value = product.stock;
+            document.getElementById('productDescription').value = product.description;
+            document.getElementById('productCategory').value = product.category || '';
+
+            // Almacenar el icono actual en una variable global
+            currentProductIcon = product.icon || '🛒';
+
+            // Mostrar icono (cambiado de image a icon)
+            if (product.icon) {
+                if (product.icon.startsWith('http') || product.icon.startsWith('data:image')) {
+                    document.getElementById('imagePreview').innerHTML =
+                        `<img src="${product.icon}" alt="${product.name}">`;
+                } else {
+                    document.getElementById('imagePreview').innerHTML = product.icon;
+                }
+            } else {
+                document.getElementById('imagePreview').innerHTML = '<span>🛒</span>';
+            }
+            selectedImageFile = null;
+
+            document.getElementById('productModal').classList.add('active');
+        }
+
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            currentProductIcon = '🛒'; // Añade esta línea
+        }
+
+        async function saveProduct() {
+            const name = document.getElementById('productName').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const category = document.getElementById('productCategory').value;
+            const description = document.getElementById('productDescription').value.trim();
+
+            // Validaciones
+            if (!name) {
+                showNotification('El nombre del producto es requerido', 'error');
+                return;
+            }
+
+            if (isNaN(price) || price <= 0) {
+                showNotification('El precio debe ser un número positivo', 'error');
+                return;
+            }
+
+            if (isNaN(stock) || stock < 0) {
+                showNotification('El stock debe ser un número positivo', 'error');
+                return;
+            }
+
+            try {
+                let imageUrl = '';
+
+                // Si hay una nueva imagen seleccionada, procesarla
+                if (selectedImageFile) {
+                    // En una implementación real, aquí subirías la imagen a Firebase Storage
+                    // Por simplicidad, usaremos una representación base64 para este ejemplo
+                    const reader = new FileReader();
+                    reader.onload = async function (event) {
+                        imageUrl = event.target.result;
+                        await completeProductSave(name, price, stock, category, description, imageUrl);
+                    };
+                    reader.readAsDataURL(selectedImageFile);
+                } else {
+                    // Si no hay nueva imagen, mantener la existente (si estamos editando)
+                    const existingProduct = currentEditingProduct ?
+                        products.find(p => p.id === currentEditingProduct) : null;
+                    imageUrl = existingProduct?.image || '🛒';
+                    await completeProductSave(name, price, stock, category, description, imageUrl);
+                }
+            } catch (error) {
+                console.error('Error al guardar producto:', error);
+                showNotification('Error al guardar el producto', 'error');
+            }
+        }
+
+        async function completeProductSave(name, price, stock, category, description, iconUrl) {
+            try {
+                const productData = {
+                    name,
+                    price,
+                    stock,
+                    category,
+                    description,
+                    icon: selectedImageFile ? iconUrl : currentProductIcon, // Usa currentProductIcon si no hay archivo seleccionado
+                    updatedAt: new Date()
+                };
+
+                if (currentEditingProduct) {
+                    // Actualizar producto existente
+                    await db.collection('products').doc(currentEditingProduct).update(productData);
+
+                    // Actualizar localmente
+                    const index = products.findIndex(p => p.id === currentEditingProduct);
+                    if (index !== -1) {
+                        products[index] = { ...products[index], ...productData };
+                    }
+
+                    showNotification('Producto actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo producto
+                    const docRef = await db.collection('products').add({
+                        ...productData,
+                        createdAt: new Date()
+                    });
+
+                    // Agregar localmente
+                    products.push({
+                        id: docRef.id,
+                        ...productData
+                    });
+
+                    showNotification('Producto agregado correctamente', 'success');
+                }
+
+                // Actualizar contadores de categorías
+                updateCategoryCounts();
+
+                // Cerrar modal y actualizar vista
+                closeProductModal();
+                renderProducts();
+                renderCategories();
+
+                // Resetear la variable del icono actual
+                currentProductIcon = '🛒';
+            } catch (error) {
+                console.error('Error al completar el guardado:', error);
+                showNotification('Error al guardar el producto', 'error');
+            }
+        }
+
+        function openAddCategoryModal() {
+            currentEditingCategory = null;
+            document.getElementById('categoryModalTitle').textContent = 'Nueva Categoría';
+            document.getElementById('saveCategoryBtn').textContent = 'Guardar Categoría';
+
+            // Limpiar formulario
+            document.getElementById('categoryName').value = '';
+
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function editCategory(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            currentEditingCategory = categoryId;
+            document.getElementById('categoryModalTitle').textContent = 'Editar Categoría';
+            document.getElementById('saveCategoryBtn').textContent = 'Actualizar Categoría';
+
+            // Llenar formulario
+            document.getElementById('categoryName').value = category.name;
+
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
+
+        async function saveCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+
+            if (!name) {
+                showNotification('El nombre de la categoría es requerido', 'error');
+                return;
+            }
+
+            try {
+                if (currentEditingCategory) {
+                    // Actualizar categoría existente
+                    await db.collection('categories').doc(currentEditingCategory).update({
+                        name,
+                        updatedAt: new Date()
+                    });
+
+                    // Actualizar localmente
+                    const index = categories.findIndex(c => c.id === currentEditingCategory);
+                    if (index !== -1) {
+                        categories[index].name = name;
+                    }
+
+                    showNotification('Categoría actualizada correctamente', 'success');
+                } else {
+                    // Crear nueva categoría
+                    const docRef = await db.collection('categories').add({
+                        name,
+                        createdAt: new Date()
+                    });
+
+                    // Agregar localmente
+                    categories.push({
+                        id: docRef.id,
+                        name,
+                        productCount: 0
+                    });
+
+                    showNotification('Categoría agregada correctamente', 'success');
+                }
+
+                // Actualizar dropdown y vista
+                updateCategoryDropdown();
+                renderCategories();
+                closeCategoryModal();
+            } catch (error) {
+                console.error('Error al guardar categoría:', error);
+                showNotification('Error al guardar la categoría', 'error');
+            }
+        }
+
+        async function deleteCategory(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (!category) return;
+
+            if (!confirm(`¿Estás seguro de que quieres eliminar la categoría "${category.name}"? Los productos asociados quedarán sin categoría.`)) return;
+
+            try {
+                // Primero, actualizar productos que usan esta categoría
+                const productsWithCategory = products.filter(p => p.category === categoryId);
+                if (productsWithCategory.length > 0) {
+                    const batch = db.batch();
+
+                    productsWithCategory.forEach(product => {
+                        const productRef = db.collection('products').doc(product.id);
+                        batch.update(productRef, { category: '' });
+                    });
+
+                    await batch.commit();
+
+                    // Actualizar localmente
+                    products.forEach(product => {
+                        if (product.category === categoryId) {
+                            product.category = '';
+                        }
+                    });
+                }
+
+                // Luego eliminar la categoría
+                await db.collection('categories').doc(categoryId).delete();
+
+                // Eliminar localmente
+                categories = categories.filter(c => c.id !== categoryId);
+
+                // Actualizar vista
+                updateCategoryDropdown();
+                renderProducts();
+                renderCategories();
+                showNotification(`Categoría "${category.name}" eliminada correctamente`, 'success');
+            } catch (error) {
+                console.error('Error al eliminar categoría:', error);
+                showNotification('Error al eliminar la categoría', 'error');
+            }
+        }
+
+
+        function updateCategoryCounts() {
+            categories.forEach(cat => {
+                cat.productCount = products.filter(p => p.category === cat.id).length;
+            });
+        }
+
+
+
+
+
+
+
+// Función para abrir modal de mesa
+function openAddMesaModal() {
+    currentEditingMesa = null;
+    document.getElementById('mesaModalTitle').textContent = 'Nueva Mesa';
+    document.getElementById('saveMesaBtn').textContent = 'Guardar Mesa';
+    document.getElementById('mesaName').value = '';
+    document.getElementById('mesaModal').classList.add('active');
+}
+
+// Función para editar mesa
+function editMesa(mesaId) {
+    const mesa = mesas[mesaId];
+    if (!mesa) return;
+
+    currentEditingMesa = mesaId;
+    document.getElementById('mesaModalTitle').textContent = 'Editar Mesa';
+    document.getElementById('saveMesaBtn').textContent = 'Actualizar Mesa';
+    document.getElementById('mesaName').value = mesa.name;
+    document.getElementById('mesaModal').classList.add('active');
+}
+
+// Función para cerrar modal
+function closeMesaModal() {
+    document.getElementById('mesaModal').classList.remove('active');
+}
+
+// Función para guardar mesa
+async function saveMesa() {
+    const name = document.getElementById('mesaName').value.trim();
+
+    if (!name) {
+        showNotification('El nombre de la mesa es requerido', 'error');
+        return;
+    }
+
+    try {
+        if (currentEditingMesa) {
+            // Actualizar mesa existente
+            await db.collection('mesas').doc(currentEditingMesa).update({
+                name,
+                updatedAt: new Date()
+            });
+            showNotification('Mesa actualizada correctamente', 'success');
+        } else {
+            // Crear nueva mesa
+            await db.collection('mesas').add({
+                name,
+                items: [],
+                total: 0,
+                createdAt: new Date()
+            });
+            showNotification('Mesa agregada correctamente', 'success');
+        }
+
+        closeMesaModal();
+        loadMesas(); // Necesitarás implementar esta función
+    } catch (error) {
+        console.error('Error al guardar mesa:', error);
+        showNotification('Error al guardar la mesa', 'error');
+    }
+}
+
+// Función para eliminar mesa
+async function deleteMesa(mesaId) {
+    const mesa = mesas[mesaId];
+    if (!mesa) return;
+
+    if (!confirm(`¿Estás seguro de que quieres eliminar la mesa "${mesa.name}"?`)) return;
+
+    try {
+        await db.collection('mesas').doc(mesaId).delete();
+        showNotification('Mesa eliminada correctamente', 'success');
+        loadMesas(); // Necesitarás implementar esta función
+    } catch (error) {
+        console.error('Error al eliminar mesa:', error);
+        showNotification('Error al eliminar la mesa', 'error');
+    }
+}
+
+// Función para renderizar mesas en el inventario
+function renderMesasInInventory() {
+    const container = document.getElementById('mesasGrid');
+
+    if (Object.keys(mesas).length === 0) {
+        container.innerHTML = '<div class="no-products">No hay mesas creadas</div>';
+        return;
+    }
+
+    container.innerHTML = Object.entries(mesas).map(([mesaId, mesa]) => {
+        return `
+            <div class="category-card">
+                <div>
+                    <div class="category-name">${mesa.name}</div>
+                </div>
+                <div class="category-actions">
+                    <button class="action-btn edit-btn" onclick="editMesa('${mesaId}')">Editar</button>
+                    <button class="action-btn delete-btn" onclick="deleteMesa('${mesaId}')">Eliminar</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+
+async function loadMesas() {
+    try {
+        const snapshot = await db.collection('mesas').get();
+        mesas = {};
+        snapshot.forEach(doc => {
+            mesas[doc.id] = doc.data();
+        });
+        renderMesasInInventory();
+    } catch (error) {
+        console.error('Error al cargar mesas:', error);
+        showNotification('Error al cargar mesas', 'error');
+    }
+}
+
+
+async function initializeInventory() {
+    try {
+        // Cargar productos, categorías y mesas
+        await Promise.all([
+            loadProducts(),
+            loadCategories(),
+            loadMesas()
+        ]);
+
+        setupInventoryEventListeners();
+        showNotification('Inventario cargado correctamente', 'success');
+    } catch (error) {
+        console.error('Error al inicializar inventario:', error);
+        showNotification('Error al cargar el inventario', 'error');
+    }
+}
+
+
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

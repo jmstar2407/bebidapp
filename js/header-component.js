@@ -14,6 +14,7 @@ class HeaderComponent extends HTMLElement {
 
                 <div style="margin-right: 50px;display: inline-flex;gap: 1rem;">
                     <a href="index.html" class="button-link">Facturación</a>
+                    <a href="facturas_generadas.html" class="button-link">Facturas Generadas</a>
                     <a href="inventario.html" class="button-link">Inventario</a>
                 </div>
             </div>

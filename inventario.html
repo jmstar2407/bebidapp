@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bebidapp - Inventario de Bebidas</title>
-        <link rel="icon" href="./img/icon 512x512.png" type="image/png" sizes="any">
+    <link rel="icon" href="./img/icon 512x512.png" type="image/png" sizes="any">
     <link rel="stylesheet" href="./css/style.css">
     <script src="./js/header-component.js"></script>
     <style>
@@ -19,16 +19,15 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-.inventory-header {
-    display: flex
-;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #e2e8f0;
-    gap: 5rem;
-}
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            gap: 5rem;
+        }
 
         .inventory-actions {
             display: flex;
@@ -661,6 +660,38 @@
                 console.error('Error al guardar producto:', error);
                 showNotification('Error al guardar el producto', 'error');
             }
+        }
+
+        async function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            if (!confirm(`¿Estás seguro de que quieres eliminar el producto "${product.name}"?`)) return;
+
+            try {
+                // Eliminar producto de Firebase
+                await db.collection('products').doc(productId).delete();
+
+                // Eliminar localmente
+                products = products.filter(p => p.id !== productId);
+
+                // Actualizar contadores de categorías
+                updateCategoryCounts();
+
+                // Actualizar vista
+                renderProducts();
+                renderCategories();
+                showNotification('Producto eliminado correctamente', 'success');
+            } catch (error) {
+                console.error('Error al eliminar producto:', error);
+                showNotification('Error al eliminar el producto', 'error');
+            }
+        }
+
+        function updateCategoryCounts() {
+            categories.forEach(cat => {
+                cat.productCount = products.filter(p => p.category === cat.id).length;
+            });
         }
 
         async function completeProductSave(name, price, stock, category, description, iconUrl) {

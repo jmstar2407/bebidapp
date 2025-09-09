@@ -4,27 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario de Bebidas</title>
+    <title>Bebidapp - Inventario de Bebidas</title>
+        <link rel="icon" href="./img/icon 512x512.png" type="image/png" sizes="any">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/header-component.js"></script>
     <style>
         /* Estilos específicos para el inventario */
         .inventory-container {
             max-width: 1200px;
-            margin: 20px auto;
+            /*margin: 20px auto;*/
             padding: 20px;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .inventory-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e2e8f0;
-        }
+.inventory-header {
+    display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+    gap: 5rem;
+}
 
         .inventory-actions {
             display: flex;
@@ -203,6 +207,9 @@
 </head>
 
 <body>
+
+    <header-component></header-component>
+
     <div class="container">
         <div class="inventory-container">
             <div class="inventory-header">
@@ -235,23 +242,23 @@
                 </tbody>
             </table>
 
-          <div class="categories-section">
-    <h2>📂 Categorías</h2>
-    <div class="categories-grid" id="categoriesGrid">
-        <!-- Las categorías se generarán aquí -->
-    </div>
-</div>
+            <div class="categories-section">
+                <h2>📂 Categorías</h2>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Las categorías se generarán aquí -->
+                </div>
+            </div>
 
-<!-- Nueva sección para mesas -->
-<div class="categories-section">
-    <h2>🍽️ Mesas</h2>
-    <div class="inventory-actions">
-        <button class="btn-primary" onclick="openAddMesaModal()">➕ Nueva Mesa</button>
-    </div>
-    <div class="categories-grid" id="mesasGrid">
-        <!-- Las mesas se generarán aquí -->
-    </div>
-</div>
+            <!-- Nueva sección para mesas -->
+            <div class="categories-section">
+                <h2>🍽️ Mesas</h2>
+                <div class="inventory-actions">
+                    <button class="btn-primary" onclick="openAddMesaModal()">➕ Nueva Mesa</button>
+                </div>
+                <div class="categories-grid" id="mesasGrid">
+                    <!-- Las mesas se generarán aquí -->
+                </div>
+            </div>
 
         </div>
     </div>
@@ -319,35 +326,49 @@
     <!-- Modal para agregar categoría -->
     <div class="modal" id="categoryModal">
         <div class="modal-content">
-            <h3 id="categoryModalTitle">Nueva Categoría</h3>
-
-            <div class="input-group">
-                <label for="categoryName">Nombre de la Categoría</label>
-                <input type="text" id="categoryName" placeholder="Ej: Whisky, Cerveza, etc.">
+            <div class="Modal-Title">
+                <h3 id="categoryModalTitle">Nueva Categoría</h3>
             </div>
 
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closeCategoryModal()">Cancelar</button>
-                <button class="btn-primary" id="saveCategoryBtn" onclick="saveCategory()">Guardar Categoría</button>
+            <div class="Modal-Body">
+                <div class="input-group">
+                    <label for="categoryName">Nombre de la Categoría</label>
+                    <input type="text" id="categoryName" placeholder="Ej: Whisky, Cerveza, etc.">
+                </div>
+            </div>
+
+            <div class="Modal-Footer">
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="closeCategoryModal()">Cancelar</button>
+                    <button class="btn-primary" id="saveCategoryBtn" onclick="saveCategory()">Guardar Categoría</button>
+                </div>
             </div>
         </div>
     </div>
 
 
     <!-- Modal para agregar/editar mesa -->
-<div class="modal" id="mesaModal">
-    <div class="modal-content">
-        <h3 id="mesaModalTitle">Nueva Mesa</h3>
-        <div class="input-group">
-            <label for="mesaName">Nombre de la Mesa</label>
-            <input type="text" id="mesaName" placeholder="Ej: Mesa 1, Barra, Terraza">
-        </div>
-        <div class="modal-buttons">
-            <button class="btn-secondary" onclick="closeMesaModal()">Cancelar</button>
-            <button class="btn-primary" id="saveMesaBtn" onclick="saveMesa()">Guardar Mesa</button>
+    <div class="modal" id="mesaModal">
+        <div class="modal-content">
+            <div class="Modal-Title">
+                <h3 id="mesaModalTitle">Nueva Mesa</h3>
+            </div>
+
+            <div class="Modal-Body">
+                <div class="input-group">
+                    <label for="mesaName">Nombre de la Mesa</label>
+                    <input type="text" id="mesaName" placeholder="Ej: Mesa 1, Barra, Terraza">
+                </div>
+            </div>
+
+            <div class="Modal-Footer">
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="closeMesaModal()">Cancelar</button>
+                    <button class="btn-primary" id="saveMesaBtn" onclick="saveMesa()">Guardar Mesa</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Notification -->
     <div class="notification" id="notification"></div>
@@ -385,23 +406,6 @@
             initializeInventory();
         });
 
-        async function initializeInventory() {
-            try {
-                // Cargar productos y categorías
-                await Promise.all([
-                    loadProducts(),
-                    loadCategories()
-                ]);
-
-                // Configurar eventos
-                setupInventoryEventListeners();
-
-                showNotification('Inventario cargado correctamente', 'success');
-            } catch (error) {
-                console.error('Error al inicializar inventario:', error);
-                showNotification('Error al cargar el inventario', 'error');
-            }
-        }
 
         function setupInventoryEventListeners() {
             // Búsqueda de productos
@@ -850,96 +854,96 @@
 
 
 
-// Función para abrir modal de mesa
-function openAddMesaModal() {
-    currentEditingMesa = null;
-    document.getElementById('mesaModalTitle').textContent = 'Nueva Mesa';
-    document.getElementById('saveMesaBtn').textContent = 'Guardar Mesa';
-    document.getElementById('mesaName').value = '';
-    document.getElementById('mesaModal').classList.add('active');
-}
-
-// Función para editar mesa
-function editMesa(mesaId) {
-    const mesa = mesas[mesaId];
-    if (!mesa) return;
-
-    currentEditingMesa = mesaId;
-    document.getElementById('mesaModalTitle').textContent = 'Editar Mesa';
-    document.getElementById('saveMesaBtn').textContent = 'Actualizar Mesa';
-    document.getElementById('mesaName').value = mesa.name;
-    document.getElementById('mesaModal').classList.add('active');
-}
-
-// Función para cerrar modal
-function closeMesaModal() {
-    document.getElementById('mesaModal').classList.remove('active');
-}
-
-// Función para guardar mesa
-async function saveMesa() {
-    const name = document.getElementById('mesaName').value.trim();
-
-    if (!name) {
-        showNotification('El nombre de la mesa es requerido', 'error');
-        return;
-    }
-
-    try {
-        if (currentEditingMesa) {
-            // Actualizar mesa existente
-            await db.collection('mesas').doc(currentEditingMesa).update({
-                name,
-                updatedAt: new Date()
-            });
-            showNotification('Mesa actualizada correctamente', 'success');
-        } else {
-            // Crear nueva mesa
-            await db.collection('mesas').add({
-                name,
-                items: [],
-                total: 0,
-                createdAt: new Date()
-            });
-            showNotification('Mesa agregada correctamente', 'success');
+        // Función para abrir modal de mesa
+        function openAddMesaModal() {
+            currentEditingMesa = null;
+            document.getElementById('mesaModalTitle').textContent = 'Nueva Mesa';
+            document.getElementById('saveMesaBtn').textContent = 'Guardar Mesa';
+            document.getElementById('mesaName').value = '';
+            document.getElementById('mesaModal').classList.add('active');
         }
 
-        closeMesaModal();
-        loadMesas(); // Necesitarás implementar esta función
-    } catch (error) {
-        console.error('Error al guardar mesa:', error);
-        showNotification('Error al guardar la mesa', 'error');
-    }
-}
+        // Función para editar mesa
+        function editMesa(mesaId) {
+            const mesa = mesas[mesaId];
+            if (!mesa) return;
 
-// Función para eliminar mesa
-async function deleteMesa(mesaId) {
-    const mesa = mesas[mesaId];
-    if (!mesa) return;
+            currentEditingMesa = mesaId;
+            document.getElementById('mesaModalTitle').textContent = 'Editar Mesa';
+            document.getElementById('saveMesaBtn').textContent = 'Actualizar Mesa';
+            document.getElementById('mesaName').value = mesa.name;
+            document.getElementById('mesaModal').classList.add('active');
+        }
 
-    if (!confirm(`¿Estás seguro de que quieres eliminar la mesa "${mesa.name}"?`)) return;
+        // Función para cerrar modal
+        function closeMesaModal() {
+            document.getElementById('mesaModal').classList.remove('active');
+        }
 
-    try {
-        await db.collection('mesas').doc(mesaId).delete();
-        showNotification('Mesa eliminada correctamente', 'success');
-        loadMesas(); // Necesitarás implementar esta función
-    } catch (error) {
-        console.error('Error al eliminar mesa:', error);
-        showNotification('Error al eliminar la mesa', 'error');
-    }
-}
+        // Función para guardar mesa
+        async function saveMesa() {
+            const name = document.getElementById('mesaName').value.trim();
 
-// Función para renderizar mesas en el inventario
-function renderMesasInInventory() {
-    const container = document.getElementById('mesasGrid');
+            if (!name) {
+                showNotification('El nombre de la mesa es requerido', 'error');
+                return;
+            }
 
-    if (Object.keys(mesas).length === 0) {
-        container.innerHTML = '<div class="no-products">No hay mesas creadas</div>';
-        return;
-    }
+            try {
+                if (currentEditingMesa) {
+                    // Actualizar mesa existente
+                    await db.collection('mesas').doc(currentEditingMesa).update({
+                        name,
+                        updatedAt: new Date()
+                    });
+                    showNotification('Mesa actualizada correctamente', 'success');
+                } else {
+                    // Crear nueva mesa
+                    await db.collection('mesas').add({
+                        name,
+                        items: [],
+                        total: 0,
+                        createdAt: new Date()
+                    });
+                    showNotification('Mesa agregada correctamente', 'success');
+                }
 
-    container.innerHTML = Object.entries(mesas).map(([mesaId, mesa]) => {
-        return `
+                closeMesaModal();
+                loadMesas(); // Necesitarás implementar esta función
+            } catch (error) {
+                console.error('Error al guardar mesa:', error);
+                showNotification('Error al guardar la mesa', 'error');
+            }
+        }
+
+        // Función para eliminar mesa
+        async function deleteMesa(mesaId) {
+            const mesa = mesas[mesaId];
+            if (!mesa) return;
+
+            if (!confirm(`¿Estás seguro de que quieres eliminar la mesa "${mesa.name}"?`)) return;
+
+            try {
+                await db.collection('mesas').doc(mesaId).delete();
+                showNotification('Mesa eliminada correctamente', 'success');
+                loadMesas(); // Necesitarás implementar esta función
+            } catch (error) {
+                console.error('Error al eliminar mesa:', error);
+                showNotification('Error al eliminar la mesa', 'error');
+            }
+        }
+
+        // Función para renderizar mesas en el inventario
+        function renderMesasInInventory() {
+            const container = document.getElementById('mesasGrid');
+
+            if (Object.keys(mesas).length === 0) {
+                container.innerHTML = '<div class="no-products">No hay mesas creadas</div>';
+                return;
+            }
+
+            container.innerHTML = Object.entries(mesas).map(([mesaId, mesa]) => {
+                return `
             <div class="category-card">
                 <div>
                     <div class="category-name">${mesa.name}</div>
@@ -950,41 +954,41 @@ function renderMesasInInventory() {
                 </div>
             </div>
         `;
-    }).join('');
-}
+            }).join('');
+        }
 
 
-async function loadMesas() {
-    try {
-        const snapshot = await db.collection('mesas').get();
-        mesas = {};
-        snapshot.forEach(doc => {
-            mesas[doc.id] = doc.data();
-        });
-        renderMesasInInventory();
-    } catch (error) {
-        console.error('Error al cargar mesas:', error);
-        showNotification('Error al cargar mesas', 'error');
-    }
-}
+        async function loadMesas() {
+            try {
+                const snapshot = await db.collection('mesas').get();
+                mesas = {};
+                snapshot.forEach(doc => {
+                    mesas[doc.id] = doc.data();
+                });
+                renderMesasInInventory();
+            } catch (error) {
+                console.error('Error al cargar mesas:', error);
+                showNotification('Error al cargar mesas', 'error');
+            }
+        }
 
 
-async function initializeInventory() {
-    try {
-        // Cargar productos, categorías y mesas
-        await Promise.all([
-            loadProducts(),
-            loadCategories(),
-            loadMesas()
-        ]);
+        async function initializeInventory() {
+            try {
+                // Cargar productos, categorías y mesas
+                await Promise.all([
+                    loadProducts(),
+                    loadCategories(),
+                    loadMesas()
+                ]);
 
-        setupInventoryEventListeners();
-        showNotification('Inventario cargado correctamente', 'success');
-    } catch (error) {
-        console.error('Error al inicializar inventario:', error);
-        showNotification('Error al cargar el inventario', 'error');
-    }
-}
+                setupInventoryEventListeners();
+
+            } catch (error) {
+                console.error('Error al inicializar inventario:', error);
+                showNotification('Error al cargar el inventario', 'error');
+            }
+        }
 
 
 

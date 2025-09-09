@@ -4,17 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS - Sistema de Facturación</title>
-    <link rel="icon" href="./img/presidente.png" type="image/png" sizes="any">
+    <title>Bebidapp - Sistema de facturación</title>
+    <link rel="icon" href="./img/icon 512x512.png" type="image/png" sizes="any">
     <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/header-component.js"></script>
 
 </head>
 
 <body>
+
+            <header-component></header-component>
+
     <div class="container">
-        <div class="header">
-            <h1>🍹 Sistema de Bebida - Brink</h1>
-        </div>
 
         <div class="main-layout">
             <div class="left-panel">
@@ -306,7 +307,6 @@
                 // Configurar eventos
                 setupEventListeners();
 
-                showNotification('Sistema iniciado correctamente', 'success');
 
             } catch (error) {
                 console.error('Error al inicializar:', error);

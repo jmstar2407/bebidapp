@@ -535,5 +535,29 @@
             }, 3000);
         }
     </script>
+
+
+<script>
+    // Verificar autenticación en cada página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuración mínima de Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp({
+                apiKey: "AIzaSyCa3ntHg9DqV3JefcvFP9cg8xCmwm0wlLo",
+                authDomain: "facturacion-drink.firebaseapp.com",
+                projectId: "facturacion-drink"
+            });
+        }
+
+        // Verificar si el usuario está autenticado
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user && !window.location.pathname.endsWith('login.html')) {
+                window.location.href = 'login.html';
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>

@@ -69,6 +69,10 @@ body {
     background: #2c3248;
 }
 
+#logoutBtn {
+    padding: 0.3rem;
+}
+
 .footer {
     position: relative;
     height: 35px;
@@ -164,7 +168,9 @@ body {
     padding: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    max-height: calc(100vh - 451px);
+    max-height: calc(100vh - 425px);
+    scrollbar-width: thin;
+    scrollbar-color: #b5b5b5 #f1f1f100;
 }
 
 .products-container {
@@ -1146,4 +1152,25 @@ input[type="number"] {
     .modal-buttons {
         display: none !important;
     }
+}
+
+
+.user-info {
+    text-align: right;
+    margin-right: 15px;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+}
+
+.user-name {
+    font-weight: bold;
+    color: #1a2135;
+    font-size: 14px;
+}
+
+.user-role {
+    color: #4a5568;
+    font-size: 12px;
+    text-transform: capitalize;
 }

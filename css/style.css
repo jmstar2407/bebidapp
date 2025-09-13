@@ -446,6 +446,8 @@ body {
     flex-direction: column;
     gap: 15px;
     width: 50%;
+    background: #ffffff;
+    border-radius: 7px;
 }
 
 .payment-right-section {
@@ -791,7 +793,7 @@ body {
 
 #bodyfactura {
     background: rgb(0 159 255 / 9%);
-
+background: rgb(87 119 139 / 49%);
 }
 
 .Modal-Footer {
@@ -1056,6 +1058,7 @@ input[type="number"] {
     display: inline-flex;
     flex-direction: column;
     width: 100%;
+    width: calc(100% - 60px);
 }
 
 

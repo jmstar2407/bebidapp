@@ -252,7 +252,7 @@ body {
 
 .mesas-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -673,7 +673,8 @@ body {
 
 .payment-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /*box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); */
+    filter: brightness(0.9);
 }
 
 .action-buttons {
@@ -793,12 +794,12 @@ body {
 
 #bodyfactura {
     background: rgb(0 159 255 / 9%);
-background: rgb(87 119 139 / 49%);
+    background: rgb(87 119 139 / 49%);
 }
 
 .Modal-Footer {
     padding: 0.5rem;
-    border-top: 1px solid rgb(238, 238, 238);
+    border-top: 1px solid rgb(95 95 95);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -859,39 +860,77 @@ background: rgb(87 119 139 / 49%);
 
 .modal-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: flex-end;
+}
+
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-primary img {
+height: 22px;
+}
+
+.btn-primary:hover {
+    background: #1b8934;
 }
 
 .btn-secondary {
     background: #e2e8f0;
     background: #7477f7;
-    color: #ffffff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    background: #56a1e3;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 1rem;
+    font-family: sans-serif;
     font-weight: bold;
     transition: all 0.3s ease;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
-.btn-secondary:hover,
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+.btn-secondary:hover {
+    filter: brightness(0.9);
 }
+
+.btn-cancel {
+    background: #973434;
+    color: white;
+    border: none;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    filter: brightness(0.9);
+}
+
 
 @media (max-width: 768px) {
     .main-layout {
@@ -900,7 +939,7 @@ background: rgb(87 119 139 / 49%);
     }
 
     .mesas-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
     }
 
     .products-container {
@@ -965,10 +1004,6 @@ background: rgb(87 119 139 / 49%);
 
 
 /* Estilos específicos para la vista previa de factura */
-.invoice-preview {
-    background: #68a6cb57;
-    padding: 1rem;
-}
 
 
 /* Eliminar flechitas de los inputs number */
@@ -1077,6 +1112,8 @@ input[type="number"] {
     text-align: center;
     background: white;
     border-radius: 7px;
+        padding: 1rem;
+
 }
 
 .factura-modern .titulo {
@@ -1155,6 +1192,32 @@ input[type="number"] {
     .modal-buttons {
         display: none !important;
     }
+
+
+    /* Posicionar el modal para impresión */
+    #invoiceModal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        display: block !important;
+        overflow: visible;
+    }
+    
+    /* Ocultar botones y elementos no necesarios en impresión */
+    .Modal-Footer,
+    .close-modal-btn {
+        display: none !important;
+    }
+    
+    /* Asegurar que el contenido de la factura sea visible */
+    .invoice-preview {
+        width: 100%;
+        height: auto;
+    }
+
 }
 
 

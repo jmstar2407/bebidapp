@@ -79,7 +79,6 @@
     <!-- Modal para procesar pago -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-
             <div class="Modal-Title">
                 <h3>Procesar Factura</h3>
                 <button class="close-modal-btn" onclick="closePaymentModal()">×</button>
@@ -99,20 +98,15 @@
                                 <button class="payment-btn payment-efectivo active"
                                     onclick="selectPaymentMethod('efectivo')">Efectivo</button>
                                 <!-- <button class="payment-btn payment-tarjeta"
-                                    onclick="selectPaymentMethod('tarjeta')">Tarjeta</button> -->
+                                onclick="selectPaymentMethod('tarjeta')">Tarjeta</button> -->
                                 <!--  <button class="payment-btn payment-transferencia"
-                                    onclick="selectPaymentMethod('transferencia')">Transferencia</button> -->
+                                onclick="selectPaymentMethod('transferencia')">Transferencia</button> -->
                             </div>
                             <input type="hidden" id="paymentMethod" value="efectivo">
                         </div>
-
-
-
-
                     </div>
 
                     <div class="payment-right-section">
-
                         <div class="input-group" id="receivedGroup">
                             <label>Dinero Recibido:</label>
                             <input type="number" id="receivedAmount" placeholder="0" step="0.01">
@@ -122,7 +116,6 @@
                             <label>Cambio:</label>
                             <input type="text" id="changeAmount" readonly>
                         </div>
-
 
                         <div class="numeric-keyboard">
                             <button class="numeric-key" onclick="appendToAmount('7')">7</button>
@@ -146,8 +139,10 @@
 
             <div class="Modal-Footer">
                 <div class="modal-buttons">
-                    <!-- <button class="btn-secondary" onclick="closePaymentModal()">Cancelar</button> -->
-                    <button class="btn-primary" onclick="confirmPayment()">Confirmar Pago</button>
+                    <!-- Botón para imprimir sin confirmar pago -->
+                    <button class="btn-secondary" onclick="printInvoiceWithoutPayment()">🖨️ Imprimir Factura</button>
+                    <button class="btn-primary" onclick="confirmPayment()">Confirmar Pago <img
+                            src="./img/icons/check_1.png"></button>
                 </div>
             </div>
         </div>
@@ -170,8 +165,10 @@
             </div>
 
             <div class="Modal-Footer">
-                <button class="btn-secondary" onclick="closeInvoiceModal()">Cancelar</button>
-                <button class="btn-primary" onclick="printInvoice()">🖨️ Imprimir Factura</button>
+                <div class="modal-buttons">
+                    <button class="btn-cancel" onclick="closeInvoiceModal()">Cancelar</button>
+                    <button class="btn-primary" onclick="printInvoice()">🖨️ Imprimir Factura</button>
+                </div>
             </div>
         </div>
     </div>
@@ -181,46 +178,46 @@
 
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-app-compat.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.0/firebase-firestore-compat.min.js"></script>
 
     <script>
 
-// Configuración de Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyCa3ntHg9DqV3JefcvFP9cg8xCmwm0wlLo",
-    authDomain: "facturacion-drink.firebaseapp.com",
-    projectId: "facturacion-drink",
-    storageBucket: "facturacion-drink.appspot.com",
-    messagingSenderId: "1093109447685",
-    appId: "1:1093109447685:web:a3015f3494f757a625b06c"
-};
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCa3ntHg9DqV3JefcvFP9cg8xCmwm0wlLo",
+            authDomain: "facturacion-drink.firebaseapp.com",
+            projectId: "facturacion-drink",
+            storageBucket: "facturacion-drink.appspot.com",
+            messagingSenderId: "1093109447685",
+            appId: "1:1093109447685:web:a3015f3494f757a625b06c"
+        };
 
-// Inicializar Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const auth = firebase.auth();   // 👈 agregado
-const db = firebase.firestore();
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();   // 👈 agregado
+        const db = firebase.firestore();
 
-// Verificar autenticación antes de cargar la app
-auth.onAuthStateChanged((user) => {
-    if (!user) {
-        // Si no hay sesión activa, redirigir al login
-        window.location.href = 'login.html';
-    } else {
-        // Si hay sesión, cargar la app
-        initializeApp();
-    }
-});
+        // Verificar autenticación antes de cargar la app
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                // Si no hay sesión activa, redirigir al login
+                window.location.href = 'login.html';
+            } else {
+                // Si hay sesión, cargar la app
+                initializeApp();
+            }
+        });
 
-// Estado de la aplicación
-let currentMesa = 'mesa1';
-let isQuickSale = false;
-let productos = [];
-let mesas = {};
-let currentEditingMesa = null;
-let viewMode = localStorage.getItem('productViewMode') || 'grid';
+        // Estado de la aplicación
+        let currentMesa = 'mesa1';
+        let isQuickSale = false;
+        let productos = [];
+        let mesas = {};
+        let currentEditingMesa = null;
+        let viewMode = localStorage.getItem('productViewMode') || 'grid';
 
 
         // Productos de ejemplo (solo como respaldo si Firestore falla)
@@ -987,8 +984,8 @@ let viewMode = localStorage.getItem('productViewMode') || 'grid';
             }
         }
 
-        function showPaymentSummary(invoice) {
-            const itemsHTML = invoice.items.map(item => `
+       function showPaymentSummary(invoice) {
+    const itemsHTML = invoice.items.map(item => `
         <tr>
             <td>${item.name}</td>
             <td>${formatCurrency(item.price)}</td>
@@ -997,23 +994,35 @@ let viewMode = localStorage.getItem('productViewMode') || 'grid';
         </tr>
     `).join('');
 
-            const efectivoHTML = invoice.paymentMethod === 'efectivo' ? `
-        <tr>
-            <td colspan="3">Recibido:</td>
+    // Obtener fecha y hora en formato 12h AM/PM
+    const now = new Date();
+    const options = { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true 
+    };
+    const formattedDate = now.toLocaleString('es-ES', options);
+
+    // Mostrar información de pago en efectivo si aplica
+    const efectivoHTML = invoice.paymentMethod === 'efectivo' ? `
+        <tr class="efectivo-info">
+            <td colspan="3">Monto Recibido:</td>
             <td>${formatCurrency(invoice.receivedAmount)}</td>
         </tr>
-        <tr>
+        <tr class="efectivo-info">
             <td colspan="3">Cambio:</td>
             <td>${formatCurrency(invoice.changeAmount)}</td>
         </tr>
     ` : '';
 
-            const html = `
+    const html = `
         <div class="factura-modern">
             <h2 class="titulo">FACTURA</h2>
-            <p>BAR RESTAURANTE</p>
-            <p>Brink POS System</p>
-            <p>${new Date().toLocaleString()}</p>
+            <p>SPIN NIGHT CLUB</p>
+            <p>${formattedDate}</p>
             <hr>
             <p><strong>ID:</strong> ${invoice.id}</p>
             <p><strong>Mesa:</strong> ${invoice.mesa}</p>
@@ -1036,14 +1045,18 @@ let viewMode = localStorage.getItem('productViewMode') || 'grid';
                         <td>${formatCurrency(invoice.total)}</td>
                     </tr>
                     <tr>
-                        <td colspan="3">IVA (0%):</td>
+                        <td colspan="3">ITBIS (Incluidos):</td>
                         <td>${formatCurrency(0)}</td>
                     </tr>
-                    <tr>
+                    <tr class="total-row">
                         <td colspan="3"><strong>Total:</strong></td>
                         <td><strong>${formatCurrency(invoice.total)}</strong></td>
                     </tr>
                     ${efectivoHTML}
+                    <tr>
+                        <td colspan="3"><strong>Método de pago:</strong></td>
+                        <td>${invoice.paymentMethod.toUpperCase()}</td>
+                    </tr>
                 </tfoot>
             </table>
             <hr>
@@ -1052,9 +1065,9 @@ let viewMode = localStorage.getItem('productViewMode') || 'grid';
         </div>
     `;
 
-            document.getElementById('invoicePreview').innerHTML = html;
-            document.getElementById('invoiceModal').classList.add('active');
-        }
+    document.getElementById('invoicePreview').innerHTML = html;
+    document.getElementById('invoiceModal').classList.add('active');
+}
 
 
         function closeInvoiceModal() {
@@ -1086,6 +1099,43 @@ let viewMode = localStorage.getItem('productViewMode') || 'grid';
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+
+
+        // Función para imprimir factura sin procesar el pago
+        function printInvoiceWithoutPayment() {
+            let currentOrder;
+            if (isQuickSale) {
+                currentOrder = window.quickOrder || { items: [], total: 0 };
+            } else {
+                currentOrder = mesas[currentMesa];
+            }
+
+            if (currentOrder.items.length === 0) {
+                showNotification('No hay productos para facturar', 'error');
+                return;
+            }
+
+            // Crear objeto de factura temporal
+            const tempInvoice = {
+                id: 'TEMP-' + Date.now(),
+                timestamp: new Date(),
+                mesa: isQuickSale ? 'Factura Rápida' : mesas[currentMesa].name,
+                items: [...currentOrder.items],
+                subtotal: currentOrder.total,
+                tax: 0,
+                total: currentOrder.total,
+                paymentMethod: 'pendiente',
+                receivedAmount: 0,
+                changeAmount: 0,
+                status: 'pending'
+            };
+
+            // Mostrar vista previa
+            showPaymentSummary(tempInvoice);
+
+            // Cerrar modal de pago
+            closePaymentModal();
         }
     </script>
 </body>

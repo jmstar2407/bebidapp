@@ -3,259 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio de Diseño Gráfico</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Mi Portafolio - Diseño Gráfico</title>
     <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-light: #f1f5f9;
+            --text-gray: #94a3b8;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1e293b 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
         }
 
-        /* Header */
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 2rem 0;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo i {
-            color: var(--accent-color);
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 1.5rem;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: background 0.3s;
-        }
-
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 4rem 0;
             text-align: center;
-            background-color: white;
+            padding: 40px 20px;
+            margin-bottom: 40px;
         }
 
-        .hero h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            color: var(--primary-color);
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: #666;
+        .subtitle {
+            color: var(--text-gray);
+            font-size: clamp(1rem, 2vw, 1.2rem);
         }
 
-        /* Filtros */
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 0.6rem 1.5rem;
-            border: 2px solid var(--secondary-color);
-            background: white;
-            color: var(--secondary-color);
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .filter-btn.active,
-        .filter-btn:hover {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        /* Galería */
         .gallery {
-            padding: 2rem 0 4rem;
-        }
-
-        .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
+            padding: 20px;
         }
 
         .gallery-item {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-            background-color: white;
-            height: 300px;
             position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: var(--bg-card);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            aspect-ratio: 4/3;
         }
 
         .gallery-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
         }
 
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            transition: transform 0.5s ease;
         }
 
-        .image-info {
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-item::after {
+            content: '🔍';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            transform: translateY(100%);
-            transition: transform 0.3s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
 
-        .gallery-item:hover .image-info {
-            transform: translateY(0);
+        .gallery-item:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
 
-        .image-info h3 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .image-info p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 3rem 0 1.5rem;
-            text-align: center;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .footer-section h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            color: var(--secondary-color);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: white;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-
-        .social-links a:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .copyright {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 1.5rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        /* Modal para vista de imagen */
         .modal {
             display: none;
             position: fixed;
@@ -263,355 +112,249 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
+            position: relative;
             max-width: 90%;
             max-height: 90%;
-            position: relative;
+            animation: zoomIn 0.3s ease;
         }
 
-        .modal-img {
-            width: 100%;
-            height: auto;
-            max-height: 80vh;
+        .modal-content img {
+            max-width: 100%;
+            max-height: 85vh;
             object-fit: contain;
-            border-radius: 5px;
+            border-radius: 10px;
         }
 
-        .close-modal {
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close-btn, .nav-btn {
             position: absolute;
-            top: -40px;
-            right: -10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
-            font-size: 2.5rem;
+            font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s;
+            padding: 10px 20px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
 
-        .close-modal:hover {
-            color: var(--accent-color);
+        .close-btn:hover, .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
         }
 
-        .modal-info {
-            color: white;
+        .close-btn {
+            top: 20px;
+            right: 20px;
+        }
+
+        .prev-btn {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .next-btn {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .loading {
             text-align: center;
-            margin-top: 15px;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--text-gray);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1.5rem;
-                text-align: center;
-            }
-
-            nav ul {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-                position: absolute;
-                top: 2rem;
-                right: 20px;
-            }
-
-            .mobile-menu {
-                display: none;
-                width: 100%;
-            }
-
-            .mobile-menu.active {
-                display: block;
-            }
-
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-
-            .gallery-grid {
+            .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
                 gap: 15px;
+                padding: 10px;
             }
 
-            .footer-content {
-                flex-direction: column;
+            header {
+                padding: 20px 10px;
+            }
+
+            .close-btn, .nav-btn {
+                font-size: 1.5rem;
+                padding: 8px 15px;
+            }
+
+            .prev-btn, .next-btn {
+                top: auto;
+                bottom: 20px;
+                transform: none;
+            }
+
+            .prev-btn {
+                left: 20px;
+            }
+
+            .next-btn {
+                right: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            .gallery-grid {
+            .gallery {
                 grid-template-columns: 1fr;
-            }
-
-            .hero h1 {
-                font-size: 1.8rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-palette"></i>
-                <span>Portafolio Creativo</span>
-            </div>
-            
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <nav class="mobile-menu" id="mobileMenu">
-                <ul>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#portafolio">Portafolio</a></li>
-                    <li><a href="#sobre-mi">Sobre mí</a></li>
-                    <li><a href="#contacto">Contacto</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Mi Portafolio</h1>
+            <p class="subtitle">Diseño Gráfico & Creatividad</p>
+        </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="inicio">
-        <div class="container">
-            <h1>Portafolio de Diseño Gráfico</h1>
-            <p>Una colección de mis trabajos más recientes en diseño gráfico, branding, ilustración y más. Explora mis proyectos creativos.</p>
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">Todos</button>
-                <button class="filter-btn" data-filter="branding">Branding</button>
-                <button class="filter-btn" data-filter="ilustracion">Ilustración</button>
-                <button class="filter-btn" data-filter="web">Web Design</button>
-                <button class="filter-btn" data-filter="print">Print</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Galería -->
-    <section class="gallery" id="portafolio">
-        <div class="container">
-            <div class="gallery-grid" id="galleryContainer">
-                <!-- Las imágenes se cargarán automáticamente aquí desde la carpeta img -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección sobre mí -->
-    <section class="hero" id="sobre-mi">
-        <div class="container">
-            <h2>Sobre Mí</h2>
-            <p>Soy un diseñador gráfico apasionado por crear soluciones visuales innovadoras que conectan marcas con su audiencia. Con más de 5 años de experiencia, me especializo en branding, ilustración digital y diseño web.</p>
-            <p>Mi enfoque combina creatividad, funcionalidad y atención al detalle para producir resultados que no solo sean visualmente atractivos, sino también efectivos para cumplir los objetivos del proyecto.</p>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contacto">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Contacto</h3>
-                    <p><i class="fas fa-envelope"></i> hola@midiseno.com</p>
-                    <p><i class="fas fa-phone"></i> +34 123 456 789</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Barcelona, España</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Sígueme</h3>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-behance"></i></a>
-                        <a href="#"><i class="fab fa-dribbble"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Información</h3>
-                    <p>Este portafolio muestra automáticamente todas las imágenes colocadas en la carpeta "img". Solo agrega nuevas imágenes y se mostrarán aquí.</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2023 Portafolio de Diseño Gráfico. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Modal para vista ampliada -->
-    <div class="modal" id="imageModal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeModal">&times;</span>
-            <img class="modal-img" id="modalImage" src="" alt="">
-            <div class="modal-info">
-                <h3 id="modalTitle"></h3>
-                <p id="modalDescription"></p>
-            </div>
+        <div class="gallery" id="gallery">
+            <div class="loading">Cargando imágenes...</div>
         </div>
     </div>
 
+    <div class="modal" id="modal">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <button class="nav-btn prev-btn" onclick="navigateImage(-1)">‹</button>
+        <div class="modal-content">
+            <img id="modalImg" src="" alt="Imagen ampliada">
+        </div>
+        <button class="nav-btn next-btn" onclick="navigateImage(1)">›</button>
+    </div>
+
     <script>
-        // Simulación de imágenes desde la carpeta "img"
-        // En un entorno real, estas imágenes se cargarían desde el servidor
-        const imageData = [
-            { filename: "branding-1.jpg", title: "Logotipo Empresa Tech", description: "Diseño de identidad corporativa para startup tecnológica", category: "branding" },
-            { filename: "ilustracion-1.png", title: "Ilustración Digital", description: "Personaje creado para campaña publicitaria", category: "ilustracion" },
-            { filename: "web-1.jpg", title: "Diseño de Landing Page", description: "Diseño responsivo para aplicación móvil", category: "web" },
-            { filename: "print-1.jpg", title: "Folletos Corporativos", description: "Diseño para material impreso de empresa", category: "print" },
-            { filename: "branding-2.png", title: "Rediseño de Marca", description: "Actualización de identidad visual para restaurante", category: "branding" },
-            { filename: "ilustracion-2.gif", title: "Animación GIF", description: "Ilustración animada para redes sociales", category: "ilustracion" },
-            { filename: "web-2.jpg", title: "E-commerce Design", description: "Diseño de tienda online para moda", category: "web" },
-            { filename: "print-2.png", title: "Revista Corporativa", description: "Diseño editorial para publicación trimestral", category: "print" },
-            { filename: "branding-3.jpg", title: "Packaging Design", description: "Diseño de empaque para producto gourmet", category: "branding" },
-            { filename: "ilustracion-3.png", title: "Serie de Ilustraciones", description: "Colección de 5 ilustraciones para libro infantil", category: "ilustracion" },
-            { filename: "web-3.jpg", title: "Dashboard UI", description: "Interfaz de usuario para aplicación de analytics", category: "web" },
-            { filename: "print-3.jpg", title: "Cartelería Evento", description: "Diseño de carteles para conferencia anual", category: "print" }
-        ];
+        const totalImages = 45; // 👈 CAMBIA ESTE NÚMERO según cuántas imágenes tengas
+        const extensions = ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG'];
+        let currentImageIndex = 0;
+        let loadedImages = [];
 
-        // URLs de imágenes de ejemplo (usando placeholders)
-        // En tu implementación real, estas serían las imágenes en tu carpeta "img"
-        const placeholderBase = "https://images.unsplash.com/photo-";
-        const imagePlaceholders = [
-            "1579546929662-711aa81148cf", "1545235617-9465d2a55698", "1561070791-4c5b1c0e8697",
-            "1561070791-2526d2a94493", "1561070791-4c5b1c0e8698", "1558655146-364adaf1fcc9",
-            "1551650975-87deedd944c3", "1545235617-9465d2a55699", "1545235617-9465d2a55700",
-            "1579546929662-711aa81148d0", "1561070791-4c5b1c0e8700", "1551650975-87deedd944c4"
-        ];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const galleryContainer = document.getElementById('galleryContainer');
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const imageModal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalDescription = document.getElementById('modalDescription');
-            const closeModal = document.getElementById('closeModal');
+        async function loadImages() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
             
-            // Función para cargar y mostrar imágenes
-            function loadImages(filter = 'all') {
-                galleryContainer.innerHTML = '';
+            for (let i = 1; i <= totalImages; i++) {
+                let imageLoaded = false;
                 
-                imageData.forEach((item, index) => {
-                    if (filter === 'all' || item.category === filter) {
-                        // En un entorno real, la ruta sería simplemente "img/" + item.filename
-                        // Usamos placeholders para este ejemplo
-                        const imageUrl = `${placeholderBase}${imagePlaceholders[index]}?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80`;
-                        
-                        const galleryItem = document.createElement('div');
-                        galleryItem.className = `gallery-item ${item.category}`;
-                        galleryItem.dataset.category = item.category;
-                        
-                        galleryItem.innerHTML = `
-                            <img src="${imageUrl}" alt="${item.title}" loading="lazy">
-                            <div class="image-info">
-                                <h3>${item.title}</h3>
-                                <p>${item.description}</p>
-                                <p><small>Categoría: ${item.category}</small></p>
-                            </div>
-                        `;
-                        
-                        galleryItem.addEventListener('click', () => openModal(imageUrl, item.title, item.description));
-                        galleryContainer.appendChild(galleryItem);
+                for (const ext of extensions) {
+                    const imgPath = `img/port-img (${i}).${ext}`;
+                    
+                    try {
+                        const exists = await checkImageExists(imgPath);
+                        if (exists) {
+                            createGalleryItem(imgPath, i - 1);
+                            loadedImages.push(imgPath);
+                            imageLoaded = true;
+                            break;
+                        }
+                    } catch (e) {
+                        continue;
                     }
-                });
-            }
-            
-            // Función para abrir el modal con la imagen
-            function openModal(src, title, description) {
-                modalImage.src = src;
-                modalImage.alt = title;
-                modalTitle.textContent = title;
-                modalDescription.textContent = description;
-                imageModal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-            }
-            
-            // Función para cerrar el modal
-            function closeImageModal() {
-                imageModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-            
-            // Cargar todas las imágenes al inicio
-            loadImages();
-            
-            // Añadir eventos a los botones de filtro
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Quitar clase active de todos los botones
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Agregar clase active al botón clickeado
-                    this.classList.add('active');
-                    
-                    // Filtrar imágenes por categoría
-                    const filter = this.dataset.filter;
-                    loadImages(filter);
-                });
-            });
-            
-            // Menu móvil
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('active');
-                mobileMenuBtn.innerHTML = mobileMenu.classList.contains('active') 
-                    ? '<i class="fas fa-times"></i>' 
-                    : '<i class="fas fa-bars"></i>';
-            });
-            
-            // Cerrar menú móvil al hacer clic en un enlace
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.remove('active');
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                });
-            });
-            
-            // Eventos para el modal
-            closeModal.addEventListener('click', closeImageModal);
-            imageModal.addEventListener('click', (e) => {
-                if (e.target === imageModal) {
-                    closeImageModal();
                 }
-            });
-            
-            // Cerrar modal con tecla ESC
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    closeImageModal();
+                
+                if (!imageLoaded) {
+                    console.warn(`No se encontró la imagen: port-img (${i})`);
                 }
+            }
+
+            if (loadedImages.length === 0) {
+                gallery.innerHTML = '<div class="loading">No se encontraron imágenes. Asegúrate de que las imágenes estén en la carpeta "img"</div>';
+            }
+        }
+
+        function checkImageExists(url) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = url;
             });
+        }
+
+        function createGalleryItem(src, index) {
+            const gallery = document.getElementById('gallery');
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.onclick = () => openModal(index);
             
-            // Smooth scroll para enlaces internos
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = `Diseño ${index + 1}`;
+            img.loading = 'lazy';
+            
+            item.appendChild(img);
+            gallery.appendChild(item);
+        }
+
+        function openModal(index) {
+            currentImageIndex = index;
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImg');
+            
+            modalImg.src = loadedImages[index];
+            modal.classList.add('active');
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateImage(direction) {
+            currentImageIndex += direction;
+            
+            if (currentImageIndex < 0) {
+                currentImageIndex = loadedImages.length - 1;
+            } else if (currentImageIndex >= loadedImages.length) {
+                currentImageIndex = 0;
+            }
+            
+            document.getElementById('modalImg').src = loadedImages[currentImageIndex];
+        }
+
+        // Cerrar modal con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') navigateImage(-1);
+            if (e.key === 'ArrowRight') navigateImage(1);
         });
+
+        // Cerrar modal al hacer clic fuera de la imagen
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') closeModal();
+        });
+
+        // Cargar imágenes al iniciar
+        loadImages();
     </script>
 </body>
 </html>

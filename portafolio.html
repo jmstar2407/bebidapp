@@ -1,142 +1,617 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Portafolio</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0f0f0f;
-      color: #fff;
-    }
-    header {
-      padding: 1.5rem;
-      text-align: center;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-    }
-    header h1 { margin: 0; font-size: 2rem; }
-    header p { margin-top: .5rem; opacity: .9; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio de Diseño Gráfico</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
-      padding: 20px;
-    }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-    .gallery img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: transform .3s ease, box-shadow .3s ease;
-    }
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
 
-    .gallery img:hover {
-      transform: scale(1.03);
-      box-shadow: 0 10px 25px rgba(0,0,0,.5);
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    /* Modal */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-    }
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    .modal img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 12px;
-    }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
 
-    .modal.active { display: flex; }
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: .9rem;
-      opacity: .7;
-    }
-  </style>
+        .logo i {
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background-color: white;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #666;
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.5rem;
+            border: 2px solid var(--secondary-color);
+            background: white;
+            color: var(--secondary-color);
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Galería */
+        .gallery {
+            padding: 2rem 0 4rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: white;
+            height: 300px;
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover .image-info {
+            transform: translateY(0);
+        }
+
+        .image-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .image-info p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Modal para vista de imagen */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-img {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: -10px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent-color);
+        }
+
+        .modal-info {
+            color: white;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: absolute;
+                top: 2rem;
+                right: 20px;
+            }
+
+            .mobile-menu {
+                display: none;
+                width: 100%;
+            }
+
+            .mobile-menu.active {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-palette"></i>
+                <span>Portafolio Creativo</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="mobile-menu" id="mobileMenu">
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#portafolio">Portafolio</a></li>
+                    <li><a href="#sobre-mi">Sobre mí</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-  <header>
-    <h1>Mi Portafolio</h1>
-    <p>Diseño gráfico · Branding · Creatividad</p>
-  </header>
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container">
+            <h1>Portafolio de Diseño Gráfico</h1>
+            <p>Una colección de mis trabajos más recientes en diseño gráfico, branding, ilustración y más. Explora mis proyectos creativos.</p>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="branding">Branding</button>
+                <button class="filter-btn" data-filter="ilustracion">Ilustración</button>
+                <button class="filter-btn" data-filter="web">Web Design</button>
+                <button class="filter-btn" data-filter="print">Print</button>
+            </div>
+        </div>
+    </section>
 
-  <main>
-    <div id="gallery" class="gallery"></div>
-  </main>
+    <!-- Galería -->
+    <section class="gallery" id="portafolio">
+        <div class="container">
+            <div class="gallery-grid" id="galleryContainer">
+                <!-- Las imágenes se cargarán automáticamente aquí desde la carpeta img -->
+            </div>
+        </div>
+    </section>
 
-  <div id="modal" class="modal" onclick="closeModal()">
-    <img id="modalImg" src="" alt="Vista previa" />
-  </div>
+    <!-- Sección sobre mí -->
+    <section class="hero" id="sobre-mi">
+        <div class="container">
+            <h2>Sobre Mí</h2>
+            <p>Soy un diseñador gráfico apasionado por crear soluciones visuales innovadoras que conectan marcas con su audiencia. Con más de 5 años de experiencia, me especializo en branding, ilustración digital y diseño web.</p>
+            <p>Mi enfoque combina creatividad, funcionalidad y atención al detalle para producir resultados que no solo sean visualmente atractivos, sino también efectivos para cumplir los objetivos del proyecto.</p>
+        </div>
+    </section>
 
-  <footer>
-    © 2026 · Tu Nombre
-  </footer>
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-envelope"></i> hola@midiseno.com</p>
+                    <p><i class="fas fa-phone"></i> +34 123 456 789</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Barcelona, España</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Sígueme</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-behance"></i></a>
+                        <a href="#"><i class="fab fa-dribbble"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Información</h3>
+                    <p>Este portafolio muestra automáticamente todas las imágenes colocadas en la carpeta "img". Solo agrega nuevas imágenes y se mostrarán aquí.</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Portafolio de Diseño Gráfico. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
-  <script>
-    /*
-      IMPORTANTE:
-      Este método funciona cuando el hosting permite listar archivos
-      (por ejemplo Apache, XAMPP, algunos VPS).
+    <!-- Modal para vista ampliada -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <img class="modal-img" id="modalImage" src="" alt="">
+            <div class="modal-info">
+                <h3 id="modalTitle"></h3>
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
 
-      Carpeta esperada:
-      /img
-        imagen1.jpg
-        imagen2.png
-        imagen3.gif
-    */
+    <script>
+        // Simulación de imágenes desde la carpeta "img"
+        // En un entorno real, estas imágenes se cargarían desde el servidor
+        const imageData = [
+            { filename: "branding-1.jpg", title: "Logotipo Empresa Tech", description: "Diseño de identidad corporativa para startup tecnológica", category: "branding" },
+            { filename: "ilustracion-1.png", title: "Ilustración Digital", description: "Personaje creado para campaña publicitaria", category: "ilustracion" },
+            { filename: "web-1.jpg", title: "Diseño de Landing Page", description: "Diseño responsivo para aplicación móvil", category: "web" },
+            { filename: "print-1.jpg", title: "Folletos Corporativos", description: "Diseño para material impreso de empresa", category: "print" },
+            { filename: "branding-2.png", title: "Rediseño de Marca", description: "Actualización de identidad visual para restaurante", category: "branding" },
+            { filename: "ilustracion-2.gif", title: "Animación GIF", description: "Ilustración animada para redes sociales", category: "ilustracion" },
+            { filename: "web-2.jpg", title: "E-commerce Design", description: "Diseño de tienda online para moda", category: "web" },
+            { filename: "print-2.png", title: "Revista Corporativa", description: "Diseño editorial para publicación trimestral", category: "print" },
+            { filename: "branding-3.jpg", title: "Packaging Design", description: "Diseño de empaque para producto gourmet", category: "branding" },
+            { filename: "ilustracion-3.png", title: "Serie de Ilustraciones", description: "Colección de 5 ilustraciones para libro infantil", category: "ilustracion" },
+            { filename: "web-3.jpg", title: "Dashboard UI", description: "Interfaz de usuario para aplicación de analytics", category: "web" },
+            { filename: "print-3.jpg", title: "Cartelería Evento", description: "Diseño de carteles para conferencia anual", category: "print" }
+        ];
 
-    const gallery = document.getElementById('gallery');
-    const supportedFormats = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        // URLs de imágenes de ejemplo (usando placeholders)
+        // En tu implementación real, estas serían las imágenes en tu carpeta "img"
+        const placeholderBase = "https://images.unsplash.com/photo-";
+        const imagePlaceholders = [
+            "1579546929662-711aa81148cf", "1545235617-9465d2a55698", "1561070791-4c5b1c0e8697",
+            "1561070791-2526d2a94493", "1561070791-4c5b1c0e8698", "1558655146-364adaf1fcc9",
+            "1551650975-87deedd944c3", "1545235617-9465d2a55699", "1545235617-9465d2a55700",
+            "1579546929662-711aa81148d0", "1561070791-4c5b1c0e8700", "1551650975-87deedd944c4"
+        ];
 
-    fetch('img/')
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const links = [...doc.querySelectorAll('a')];
-
-        links.forEach(link => {
-          const href = link.getAttribute('href');
-          const ext = href.split('.').pop().toLowerCase();
-
-          if (supportedFormats.includes(ext)) {
-            const img = document.createElement('img');
-            img.src = 'img/' + href;
-            img.alt = 'Diseño gráfico';
-            img.onclick = () => openModal(img.src);
-            gallery.appendChild(img);
-          }
+        document.addEventListener('DOMContentLoaded', function() {
+            const galleryContainer = document.getElementById('galleryContainer');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const closeModal = document.getElementById('closeModal');
+            
+            // Función para cargar y mostrar imágenes
+            function loadImages(filter = 'all') {
+                galleryContainer.innerHTML = '';
+                
+                imageData.forEach((item, index) => {
+                    if (filter === 'all' || item.category === filter) {
+                        // En un entorno real, la ruta sería simplemente "img/" + item.filename
+                        // Usamos placeholders para este ejemplo
+                        const imageUrl = `${placeholderBase}${imagePlaceholders[index]}?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80`;
+                        
+                        const galleryItem = document.createElement('div');
+                        galleryItem.className = `gallery-item ${item.category}`;
+                        galleryItem.dataset.category = item.category;
+                        
+                        galleryItem.innerHTML = `
+                            <img src="${imageUrl}" alt="${item.title}" loading="lazy">
+                            <div class="image-info">
+                                <h3>${item.title}</h3>
+                                <p>${item.description}</p>
+                                <p><small>Categoría: ${item.category}</small></p>
+                            </div>
+                        `;
+                        
+                        galleryItem.addEventListener('click', () => openModal(imageUrl, item.title, item.description));
+                        galleryContainer.appendChild(galleryItem);
+                    }
+                });
+            }
+            
+            // Función para abrir el modal con la imagen
+            function openModal(src, title, description) {
+                modalImage.src = src;
+                modalImage.alt = title;
+                modalTitle.textContent = title;
+                modalDescription.textContent = description;
+                imageModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Función para cerrar el modal
+            function closeImageModal() {
+                imageModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Cargar todas las imágenes al inicio
+            loadImages();
+            
+            // Añadir eventos a los botones de filtro
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Quitar clase active de todos los botones
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Agregar clase active al botón clickeado
+                    this.classList.add('active');
+                    
+                    // Filtrar imágenes por categoría
+                    const filter = this.dataset.filter;
+                    loadImages(filter);
+                });
+            });
+            
+            // Menu móvil
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                mobileMenuBtn.innerHTML = mobileMenu.classList.contains('active') 
+                    ? '<i class="fas fa-times"></i>' 
+                    : '<i class="fas fa-bars"></i>';
+            });
+            
+            // Cerrar menú móvil al hacer clic en un enlace
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                });
+            });
+            
+            // Eventos para el modal
+            closeModal.addEventListener('click', closeImageModal);
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    closeImageModal();
+                }
+            });
+            
+            // Cerrar modal con tecla ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                }
+            });
+            
+            // Smooth scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         });
-      })
-      .catch(() => {
-        gallery.innerHTML = '<p>No se pudieron cargar las imágenes.</p>';
-      });
-
-    function openModal(src) {
-      document.getElementById('modalImg').src = src;
-      document.getElementById('modal').classList.add('active');
-    }
-
-    function closeModal() {
-      document.getElementById('modal').classList.remove('active');
-    }
-  </script>
-
+    </script>
 </body>
 </html>

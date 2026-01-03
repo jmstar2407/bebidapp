@@ -26,7 +26,7 @@
             color: var(--text-light);
             min-height: 100vh;
             padding: 20px;
-            touch-action: pan-y; /* Mejora desplazamiento en móviles */
+            overflow-x: hidden;
         }
 
         .container {
@@ -60,6 +60,7 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             padding: 20px;
+            will-change: transform;
         }
 
         .gallery-item {
@@ -69,14 +70,16 @@
             background: var(--bg-card);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateZ(0); /* Aceleración GPU */
+            backface-visibility: hidden;
+            will-change: transform;
             aspect-ratio: 4/3;
-            user-select: none;
-            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* Hover optimizado - solo transform y opacity */
         .gallery-item:hover {
-            transform: translateY(-5px);
+            transform: translate3d(0, -5px, 0);
             box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
         }
 
@@ -84,27 +87,32 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
+        /* Hover más ligero para la imagen */
         .gallery-item:hover img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
-        .gallery-item::after {
-            content: '🔍';
+        /* Eliminado el pseudoelemento con efecto complejo */
+        .gallery-item::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 3rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease;
+            z-index: 1;
             pointer-events: none;
         }
 
-        .gallery-item:hover::after {
-            transform: translate(-50%, -50%) scale(1);
+        .gallery-item:hover::before {
             opacity: 1;
         }
 
@@ -120,22 +128,32 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            touch-action: pan-y pinch-zoom;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            will-change: opacity;
         }
 
         .modal.active {
             display: flex;
+            opacity: 1;
+            animation: modalFadeIn 0.2s ease forwards;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-content {
             position: relative;
             max-width: 90%;
             max-height: 90%;
-            animation: zoomIn 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            transform: translateZ(0);
+            will-change: transform, opacity;
         }
 
         .modal-content img {
@@ -143,78 +161,41 @@
             max-height: 85vh;
             object-fit: contain;
             border-radius: 10px;
-            transition: transform 0.3s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
 
-        /* Indicadores de desplazamiento táctil */
-        .swipe-hint {
-            position: absolute;
-            bottom: 100px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            margin: 0 auto;
-            width: fit-content;
-            display: none;
-            z-index: 1001;
-            pointer-events: none;
+        /* Animaciones simplificadas para deslizamiento */
+        .slide-left {
+            animation: slideFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        .swipe-hint span {
-            margin: 0 10px;
-            font-size: 1.5rem;
+        .slide-right {
+            animation: slideFromLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /* Animación de deslizamiento */
         @keyframes slideFromRight {
-            from {
-                transform: translateX(100px);
+            0% {
+                transform: translate3d(100px, 0, 0);
                 opacity: 0;
             }
-            to {
-                transform: translateX(0);
+            100% {
+                transform: translate3d(0, 0, 0);
                 opacity: 1;
             }
         }
 
         @keyframes slideFromLeft {
-            from {
-                transform: translateX(-100px);
+            0% {
+                transform: translate3d(-100px, 0, 0);
                 opacity: 0;
             }
-            to {
-                transform: translateX(0);
+            100% {
+                transform: translate3d(0, 0, 0);
                 opacity: 1;
             }
-        }
-
-        .slide-right {
-            animation: slideFromRight 0.3s ease;
-        }
-
-        .slide-left {
-            animation: slideFromLeft 0.3s ease;
         }
 
         .close-btn, .nav-btn {
@@ -226,16 +207,16 @@
             cursor: pointer;
             padding: 10px 20px;
             border-radius: 50%;
-            transition: all 0.3s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
             z-index: 1001;
-            user-select: none;
-            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transform: translateZ(0);
         }
 
         .close-btn:hover, .nav-btn:hover {
             background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+            transform: scale(1.05) translateZ(0);
         }
 
         .close-btn {
@@ -246,13 +227,13 @@
         .prev-btn {
             left: 20px;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) translateZ(0);
         }
 
         .next-btn {
             right: 20px;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) translateZ(0);
         }
 
         .loading {
@@ -262,7 +243,37 @@
             color: var(--text-gray);
         }
 
-        /* Indicador de posición (dots) */
+        /* Indicador de desplazamiento táctil mejorado */
+        .swipe-hint {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateZ(0);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            display: none;
+            z-index: 1001;
+            pointer-events: none;
+            white-space: nowrap;
+            will-change: opacity;
+            animation: hintPulse 3s ease-in-out forwards;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        .swipe-hint span {
+            margin: 0 8px;
+            font-size: 1.3rem;
+        }
+
+        /* Indicador de posición optimizado */
         .image-indicator {
             position: absolute;
             bottom: 30px;
@@ -270,24 +281,29 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             z-index: 1001;
+            transform: translateZ(0);
         }
 
         .indicator-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
             cursor: pointer;
+            transform: translateZ(0);
         }
 
         .indicator-dot.active {
-            background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.2);
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.2) translateZ(0);
+            width: 12px;
+            border-radius: 6px;
         }
 
+        /* Media queries optimizadas */
         @media (max-width: 768px) {
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -301,7 +317,7 @@
 
             .close-btn, .nav-btn {
                 font-size: 1.5rem;
-                padding: 8px 15px;
+                padding: 8px 16px;
             }
 
             .prev-btn, .next-btn {
@@ -319,44 +335,55 @@
             }
 
             .swipe-hint {
-                display: block;
-                animation: fadeInOut 3s ease;
-            }
-
-            @keyframes fadeInOut {
-                0% { opacity: 0; }
-                20% { opacity: 1; }
-                80% { opacity: 1; }
-                100% { opacity: 0; }
+                bottom: 80px;
+                font-size: 0.9rem;
+                padding: 10px 16px;
             }
         }
 
         @media (max-width: 480px) {
             .gallery {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .gallery-item {
+                aspect-ratio: 16/9;
             }
             
             .swipe-hint {
                 bottom: 70px;
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
             
             .swipe-hint span {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+            }
+            
+            .image-indicator {
+                bottom: 60px;
             }
         }
 
-        /* Prevenir zoom en doble toque */
-        .modal-content {
-            touch-action: pan-y;
+        /* Prevenir renderizado costoso */
+        .gallery-item, .modal-content img, .close-btn, .nav-btn {
+            contain: layout paint style;
         }
 
-        img {
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
+        /* Optimización para Safari */
+        @supports (-webkit-touch-callout: none) {
+            .gallery-item {
+                -webkit-transform: translateZ(0);
+            }
+            
+            .modal {
+                -webkit-backface-visibility: hidden;
+            }
+        }
+
+        /* Mejorar scroll performance */
+        .gallery {
+            transform: translate3d(0, 0, 0);
         }
     </style>
 </head>
@@ -382,55 +409,100 @@
         
         <button class="nav-btn next-btn" onclick="navigateImage(1)">›</button>
         
-        <!-- Indicador de posición -->
         <div class="image-indicator" id="imageIndicator"></div>
         
-        <!-- Indicador de desplazamiento táctil (solo móvil) -->
         <div class="swipe-hint" id="swipeHint">
-            Desliza para cambiar de imagen <span>← →</span>
+            Desliza para cambiar <span>← →</span>
         </div>
     </div>
 
     <script>
-        const totalImages = 45; // 👈 CAMBIA ESTE NÚMERO según cuántas imágenes tengas
-        const extensions = ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG'];
+        const totalImages = 45;
+        const extensions = ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG', 'webp', 'WEBP'];
         let currentImageIndex = 0;
         let loadedImages = [];
+        let imageCache = new Map(); // Cache de imágenes pre-cargadas
         
         // Variables para el control táctil
         let touchStartX = 0;
         let touchEndX = 0;
-        let touchStartY = 0;
-        let touchEndY = 0;
         let isSwiping = false;
-        const SWIPE_THRESHOLD = 50; // Mínimo de píxeles para considerar un deslizamiento
+        let animationFrameId = null;
+        const SWIPE_THRESHOLD = 30; // Umbral reducido para mejor respuesta
 
-        async function loadImages() {
-            const gallery = document.getElementById('gallery');
-            gallery.innerHTML = '';
-            
+        // Precargar imágenes en segundo plano
+        async function preloadImages() {
             for (let i = 1; i <= totalImages; i++) {
-                let imageLoaded = false;
-                
                 for (const ext of extensions) {
                     const imgPath = `img/port-img (${i}).${ext}`;
-                    
                     try {
                         const exists = await checkImageExists(imgPath);
-                        if (exists) {
-                            createGalleryItem(imgPath, i - 1);
-                            loadedImages.push(imgPath);
-                            imageLoaded = true;
+                        if (exists && !imageCache.has(imgPath)) {
+                            const img = new Image();
+                            img.src = imgPath;
+                            imageCache.set(imgPath, img);
                             break;
                         }
                     } catch (e) {
                         continue;
                     }
                 }
+            }
+        }
+
+        async function loadImages() {
+            const gallery = document.getElementById('gallery');
+            
+            // Mostrar carga optimizada
+            if (!gallery.querySelector('.gallery-item')) {
+                gallery.innerHTML = '<div class="loading">Cargando imágenes...</div>';
+            }
+            
+            // Cargar en lotes para mejor performance
+            const batchSize = 10;
+            const totalBatches = Math.ceil(totalImages / batchSize);
+            
+            for (let batch = 0; batch < totalBatches; batch++) {
+                const start = batch * batchSize + 1;
+                const end = Math.min((batch + 1) * batchSize, totalImages);
                 
-                if (!imageLoaded) {
-                    console.warn(`No se encontró la imagen: port-img (${i})`);
+                for (let i = start; i <= end; i++) {
+                    let imageLoaded = false;
+                    
+                    for (const ext of extensions) {
+                        const imgPath = `img/port-img (${i}).${ext}`;
+                        
+                        if (imageCache.has(imgPath)) {
+                            createGalleryItem(imgPath, loadedImages.length);
+                            loadedImages.push(imgPath);
+                            imageLoaded = true;
+                            break;
+                        }
+                        
+                        try {
+                            const exists = await checkImageExists(imgPath);
+                            if (exists) {
+                                createGalleryItem(imgPath, loadedImages.length);
+                                loadedImages.push(imgPath);
+                                // Pre-cargar en cache
+                                const img = new Image();
+                                img.src = imgPath;
+                                imageCache.set(imgPath, img);
+                                imageLoaded = true;
+                                break;
+                            }
+                        } catch (e) {
+                            continue;
+                        }
+                    }
+                    
+                    if (!imageLoaded) {
+                        console.warn(`No se encontró la imagen: port-img (${i})`);
+                    }
                 }
+                
+                // Permitir que el navegador renderice
+                await new Promise(resolve => setTimeout(resolve, 0));
             }
 
             if (loadedImages.length === 0) {
@@ -440,27 +512,57 @@
 
         function checkImageExists(url) {
             return new Promise((resolve) => {
+                if (imageCache.has(url)) {
+                    resolve(true);
+                    return;
+                }
+                
                 const img = new Image();
                 img.onload = () => resolve(true);
                 img.onerror = () => resolve(false);
                 img.src = url;
+                
+                // Timeout para evitar esperas infinitas
+                setTimeout(() => resolve(false), 1000);
             });
         }
 
         function createGalleryItem(src, index) {
             const gallery = document.getElementById('gallery');
+            const loadingElement = gallery.querySelector('.loading');
+            
+            if (loadingElement && gallery.children.length === 1) {
+                gallery.innerHTML = '';
+            }
+            
             const item = document.createElement('div');
             item.className = 'gallery-item';
-            item.onclick = () => openModal(index);
+            
+            // Usar event delegation para mejor performance
+            item.dataset.index = index;
             
             const img = document.createElement('img');
             img.src = src;
             img.alt = `Diseño ${index + 1}`;
             img.loading = 'lazy';
+            img.decoding = 'async';
             
             item.appendChild(img);
             gallery.appendChild(item);
         }
+
+        // Event delegation para los items de la galería
+        document.getElementById('gallery').addEventListener('click', (e) => {
+            let target = e.target;
+            while (target && !target.classList.contains('gallery-item')) {
+                if (target === document.getElementById('gallery')) return;
+                target = target.parentElement;
+            }
+            
+            if (target && target.dataset.index) {
+                openModal(parseInt(target.dataset.index));
+            }
+        });
 
         function openModal(index) {
             currentImageIndex = index;
@@ -468,38 +570,54 @@
             const modalImg = document.getElementById('modalImg');
             const modalContent = document.getElementById('modalContent');
             
-            modalImg.src = loadedImages[index];
-            modal.classList.add('active');
-            
-            // Quitar animaciones previas
+            // Prevenir animaciones previas
             modalContent.classList.remove('slide-left', 'slide-right');
             
+            // Cambiar imagen sin animación inicial
+            modalImg.src = loadedImages[index];
+            
+            // Mostrar modal con animación ligera
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
             // Actualizar indicadores
             updateImageIndicator();
             
-            // Agregar eventos táctiles
+            // Configurar eventos táctiles
             setupTouchEvents();
         }
 
         function closeModal() {
             const modal = document.getElementById('modal');
             modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
             
-            // Remover eventos táctiles
+            // Pequeño delay para permitir la animación de salida
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+            }, 200);
+            
             removeTouchEvents();
         }
 
         function navigateImage(direction, isSwipe = false) {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            
             const modalImg = document.getElementById('modalImg');
             const modalContent = document.getElementById('modalContent');
             
-            // Aplicar animación de deslizamiento
+            // Calcular nuevo índice
+            let newIndex = currentImageIndex + direction;
+            if (newIndex < 0) newIndex = loadedImages.length - 1;
+            if (newIndex >= loadedImages.length) newIndex = 0;
+            
+            // Animación suave
             if (isSwipe) {
                 modalContent.classList.remove('slide-left', 'slide-right');
-                void modalContent.offsetWidth; // Forzar reflow
+                
+                // Forzar reflow de manera optimizada
+                void modalContent.offsetWidth;
                 
                 if (direction > 0) {
                     modalContent.classList.add('slide-left');
@@ -508,114 +626,90 @@
                 }
             }
             
-            currentImageIndex += direction;
-            
-            if (currentImageIndex < 0) {
-                currentImageIndex = loadedImages.length - 1;
-            } else if (currentImageIndex >= loadedImages.length) {
-                currentImageIndex = 0;
-            }
-            
-            modalImg.src = loadedImages[currentImageIndex];
-            
-            // Actualizar indicadores
-            updateImageIndicator();
+            // Usar requestAnimationFrame para cambio sincronizado
+            animationFrameId = requestAnimationFrame(() => {
+                currentImageIndex = newIndex;
+                modalImg.src = loadedImages[currentImageIndex];
+                updateImageIndicator();
+                animationFrameId = null;
+            });
         }
 
         function updateImageIndicator() {
             const indicator = document.getElementById('imageIndicator');
-            indicator.innerHTML = '';
             
-            for (let i = 0; i < loadedImages.length; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'indicator-dot';
-                if (i === currentImageIndex) {
-                    dot.classList.add('active');
+            // Solo actualizar si es necesario
+            if (indicator.children.length !== loadedImages.length) {
+                indicator.innerHTML = '';
+                
+                for (let i = 0; i < loadedImages.length; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'indicator-dot';
+                    if (i === currentImageIndex) {
+                        dot.classList.add('active');
+                    }
+                    
+                    dot.addEventListener('click', () => {
+                        if (i !== currentImageIndex) {
+                            currentImageIndex = i;
+                            document.getElementById('modalImg').src = loadedImages[currentImageIndex];
+                            updateImageIndicator();
+                        }
+                    });
+                    
+                    indicator.appendChild(dot);
                 }
-                
-                dot.addEventListener('click', () => {
-                    currentImageIndex = i;
-                    document.getElementById('modalImg').src = loadedImages[currentImageIndex];
-                    updateImageIndicator();
-                });
-                
-                indicator.appendChild(dot);
+            } else {
+                // Solo actualizar clases activas
+                const dots = indicator.children;
+                for (let i = 0; i < dots.length; i++) {
+                    if (i === currentImageIndex) {
+                        dots[i].classList.add('active');
+                    } else {
+                        dots[i].classList.remove('active');
+                    }
+                }
             }
         }
 
-        // Configurar eventos táctiles
+        // Eventos táctiles optimizados
         function setupTouchEvents() {
             const modalContent = document.getElementById('modalContent');
-            const modalImg = document.getElementById('modalImg');
             
             modalContent.addEventListener('touchstart', handleTouchStart, { passive: true });
-            modalContent.addEventListener('touchmove', handleTouchMove, { passive: true });
+            modalContent.addEventListener('touchmove', handleTouchMove, { passive: false });
             modalContent.addEventListener('touchend', handleTouchEnd, { passive: true });
-            
-            // También para la imagen por si acaso
-            modalImg.addEventListener('touchstart', handleTouchStart, { passive: true });
-            modalImg.addEventListener('touchmove', handleTouchMove, { passive: true });
-            modalImg.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
 
         function removeTouchEvents() {
             const modalContent = document.getElementById('modalContent');
-            const modalImg = document.getElementById('modalImg');
             
             modalContent.removeEventListener('touchstart', handleTouchStart);
             modalContent.removeEventListener('touchmove', handleTouchMove);
             modalContent.removeEventListener('touchend', handleTouchEnd);
-            
-            modalImg.removeEventListener('touchstart', handleTouchStart);
-            modalImg.removeEventListener('touchmove', handleTouchMove);
-            modalImg.removeEventListener('touchend', handleTouchEnd);
         }
 
         function handleTouchStart(e) {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
+            touchStartX = e.touches[0].clientX;
             isSwiping = true;
         }
 
         function handleTouchMove(e) {
             if (!isSwiping) return;
             
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            
-            // Mover ligeramente la imagen durante el deslizamiento
-            const modalImg = document.getElementById('modalImg');
-            const diffX = touchEndX - touchStartX;
-            
-            // Solo mover horizontalmente si es un deslizamiento horizontal
-            if (Math.abs(diffX) > Math.abs(touchEndY - touchStartY)) {
-                e.preventDefault();
-                modalImg.style.transform = `translateX(${diffX * 0.3}px)`;
-            }
+            e.preventDefault();
+            touchEndX = e.touches[0].clientX;
         }
 
-        function handleTouchEnd(e) {
+        function handleTouchEnd() {
             if (!isSwiping) return;
             
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            
-            // Restablecer transformación de la imagen
-            const modalImg = document.getElementById('modalImg');
-            modalImg.style.transform = '';
-            
-            // Determinar si fue un deslizamiento horizontal
             const diffX = touchEndX - touchStartX;
-            const diffY = touchEndY - touchStartY;
             
-            // Si el movimiento horizontal es mayor que el vertical, es un deslizamiento horizontal
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > SWIPE_THRESHOLD) {
-                // Deslizamiento de izquierda a derecha (ir a imagen anterior)
+            if (Math.abs(diffX) > SWIPE_THRESHOLD) {
                 if (diffX > 0) {
                     navigateImage(-1, true);
-                } 
-                // Deslizamiento de derecha a izquierda (ir a imagen siguiente)
-                else {
+                } else {
                     navigateImage(1, true);
                 }
             }
@@ -623,34 +717,54 @@
             isSwiping = false;
         }
 
-        // Cerrar modal con tecla ESC
+        // Eventos de teclado
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-            if (e.key === 'ArrowLeft') navigateImage(-1);
-            if (e.key === 'ArrowRight') navigateImage(1);
+            if (!document.getElementById('modal').classList.contains('active')) return;
+            
+            switch(e.key) {
+                case 'Escape':
+                    closeModal();
+                    break;
+                case 'ArrowLeft':
+                    navigateImage(-1);
+                    break;
+                case 'ArrowRight':
+                    navigateImage(1);
+                    break;
+            }
         });
 
-        // Cerrar modal al hacer clic fuera de la imagen
+        // Cerrar modal al hacer clic fuera
         document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') closeModal();
+            if (e.target.id === 'modal') {
+                closeModal();
+            }
         });
 
-        // Cargar imágenes al iniciar
-        loadImages();
-        
-        // Detectar si es un dispositivo táctil
-        function isTouchDevice() {
-            return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        }
-        
-        // Ocultar indicador táctil después de 3 segundos
-        if (isTouchDevice()) {
-            setTimeout(() => {
+        // Inicializar
+        async function init() {
+            // Iniciar precarga en segundo plano
+            preloadImages();
+            
+            // Cargar primeras imágenes para mostrar rápido
+            await loadImages();
+            
+            // Detectar dispositivo táctil
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                 const swipeHint = document.getElementById('swipeHint');
-                if (swipeHint) {
+                swipeHint.style.display = 'block';
+                
+                setTimeout(() => {
                     swipeHint.style.display = 'none';
-                }
-            }, 3000);
+                }, 3000);
+            }
+        }
+
+        // Iniciar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
         }
     </script>
 </body>

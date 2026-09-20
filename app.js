@@ -1,8 +1,7 @@
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
-import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
 import {getFirestore,doc,onSnapshot,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 const firebaseConfig={apiKey:'AIzaSyCa3ntHg9DqV3JefcvFP9cg8xCmwm0wlLo',authDomain:'facturacion-drink.firebaseapp.com',projectId:'facturacion-drink',storageBucket:'facturacion-drink.firebasestorage.app',messagingSenderId:'1093109447685',appId:'1:1093109447685:web:a3015f3494f757a625b06c'};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const app=initializeApp(firebaseConfig),db=getFirestore(app);
 const deviceId='aire-principal',ref=name=>doc(db,'qpAir',deviceId,'sync',name),$=id=>document.getElementById(id);
 let state={power:false,temp:24,mode:3,fan:0,swing:false,turbo:false},reported=null,unsub=null,pending=null,debounce=null,timeout=null,serverReady=false,session=0;
 const names={3:'Frío',2:'Seco',7:'Ventilar',8:'Automático'};
@@ -34,11 +33,8 @@ document.querySelector('#dashboard').addEventListener('click',e=>{
  switch(b.dataset.action){case 'minus':state.temp=Math.max(16,state.temp-1);break;case 'plus':state.temp=Math.min(30,state.temp+1);break;case 'power':state.power=!state.power;break;case 'swing':state.swing=!state.swing;state.turbo=false;break;case 'turbo':state.turbo=!state.turbo;if(state.turbo){state.fan=5;state.swing=true;}break;}
  render();message('Preparando ajustes…');clearTimeout(debounce);debounce=setTimeout(send,450);
 });
-$('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('enter').disabled=true;$('loginError').textContent='';try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value);$('password').value='';}catch(e){$('loginError').textContent=e.code==='auth/network-request-failed'?'No hay conexión. Inténtalo de nuevo.':'No se pudo iniciar sesión. Revisa correo, contraseña y configuración de Authentication.';}finally{$('enter').disabled=false;}});
-$('logout').onclick=()=>signOut(auth);
-onAuthStateChanged(auth,user=>{
- session++;cancel();unsub?.();reported=null;serverReady=false;$('login').hidden=!!user;$('dashboard').hidden=!user;$('logout').hidden=!user;
- if(!user)return;message('Conectando con la tarjeta…');render();
+function connect(){
+ session++;cancel();unsub?.();reported=null;serverReady=false;message('Conectando con la tarjeta…');render();
  unsub=onSnapshot(ref('reported'),{includeMetadataChanges:true},snap=>{
   serverReady=!snap.metadata.fromCache;if(!snap.exists()){message('Falta vincular o conectar la tarjeta');render();return;}
   const previous=reported;reported=snap.data();
@@ -46,6 +42,21 @@ onAuthStateChanged(auth,user=>{
   else if(pending&&previous&&(reported.bootId!==previous.bootId||reported.revision!==previous.revision)){fail('El estado cambió en la tarjeta. Vuelve a intentarlo.');}
   else if(!pending&&!debounce)message('Ajustes sincronizados');
   if(!pending&&!debounce&&reported.state)state={...reported.state};render();
- },()=>{serverReady=false;fail('No se pudo leer el estado. Revisa acceso y reglas.');});
+ },()=>{serverReady=false;fail('No se pudo leer el estado. Revisa acceso y reglas de Firestore.');});
+}
+const fullscreenBtn=$('fullscreen');
+function syncFullscreenButton(){
+ const active=!!document.fullscreenElement;
+ fullscreenBtn.classList.toggle('active',active);
+ fullscreenBtn.setAttribute('aria-label',active?'Salir de pantalla completa':'Pantalla completa');
+ fullscreenBtn.title=active?'Salir de pantalla completa':'Pantalla completa';
+}
+fullscreenBtn.addEventListener('click',async()=>{
+ try{
+  if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+  else await document.exitFullscreen();
+ }catch(e){message('La pantalla completa no está disponible en este navegador.');}
 });
+document.addEventListener('fullscreenchange',syncFullscreenButton);
+connect();
 window.addEventListener('offline',()=>fail('Sin internet'));window.addEventListener('online',render);setInterval(render,5000);

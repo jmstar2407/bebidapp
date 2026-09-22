@@ -1,0 +1,10 @@
+{
+  "name": "Lorens QP",
+  "short_name": "Lorens QP",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "background_color": "#101817",
+  "theme_color": "#101817",
+  "orientation": "any"
+}
